@@ -1,0 +1,10 @@
+[centos]
+servidor1 ansible_host=192.168.56.101
+
+[ubuntu]
+servidor2 ansible_host=192.168.56.104
+
+[linux:children]
+centos
+ubuntu
+
