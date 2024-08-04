@@ -1,0 +1,23 @@
+---
+- name: Configurar el firewall para Tomcat
+  hosts: servidor1
+  become: yes
+  tasks:
+    - name: Asegurar que firewalld esté instalado
+      ansible.builtin.yum:
+        name: firewalld
+        state: present
+
+    - name: Iniciar y habilitar firewalld
+      ansible.builtin.systemd:
+        name: firewalld
+        state: started
+        enabled: yes
+
+    - name: Permito conexiones al puerto 8080
+      ansible.posix.firewalld:
+        port: 8080/tcp
+        state: enabled
+        immediate: true
+        permanent: true
+      

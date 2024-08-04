@@ -1,0 +1,9 @@
+---
+- name: Instalar JDK en el servidor1 CentOS
+  hosts: servidor1
+  become: yes
+  tasks:
+    - name: Instalar el JDK
+      yum:
+        name: java-1.8.0-openjdk
+        state: present

@@ -1,0 +1,65 @@
+---
+- name: Instalar y configurar Tomcat
+  hosts: centos
+  become: true
+  user: sysadmin
+
+  tasks:
+
+  - name: Instalar Tomcat
+    ansible.builtin.dnf:
+      name: tomcat
+      state: present
+
+  - name: Instalar Tomcat Web Application Manager
+    ansible.builtin.dnf:
+      name: tomcat-webapps
+      state: present
+
+  - name: Instalar Tomcat Admin Webapps
+    ansible.builtin.dnf:
+      name: tomcat-admin-webapps
+      state: present
+
+  - name: Copiar el archivo WAR a la carpeta webapps de Tomcat
+    ansible.builtin.copy:
+      src: ./files/todo.war
+      dest: /usr/share/tomcat/webapps/todo.war
+    notify: Reiniciar Tomcat
+
+  - name: Configurar conexión de base de datos para la aplicación
+    ansible.builtin.copy:
+      content: |
+        tipoDB=mysql
+        jdbcURL=jdbc:mysql://localhost:3306/todo
+        jdbcUsername=prueba
+        jdbcPassword=prueba2024
+      dest: /opt/config/app.properties
+      owner: tomcat
+      group: tomcat
+      mode: '0644'
+
+  - name: Crear servicio systemd para Tomcat
+    ansible.builtin.template:
+      src: ./templates/index.j2
+      dest: /etc/systemd/system/tomcat.service
+    notify: Recargar daemon de systemd
+
+  - name: Recargar daemon de systemd
+    ansible.builtin.command: systemctl daemon-reload
+    when: not ansible_check_mode
+
+  - name: Asegurar que el servicio de Tomcat esté iniciado y habilitado
+    ansible.builtin.systemd:
+      name: tomcat
+      state: started
+      enabled: true
+
+  handlers:
+
+  - name: Reiniciar Tomcat
+    ansible.builtin.systemd:
+      name: tomcat
+      state: restarted
+        
+

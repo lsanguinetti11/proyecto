@@ -1,0 +1,35 @@
+---
+- name: Configuro ufw en  servidor base de datos en ubuntu
+  hosts: database
+  become: true
+  user: sysadmin
+
+  tasks:
+
+  - name: UFW instalado
+    ansible.builtin.apt:
+      name: ufw
+      state: present
+
+  - name: Permitir puerto 22 en ufw
+    community.general.ufw:
+      rule: allow
+      name: OpenSSH
+
+  - name: Defino politicas de tráfico entrante
+    community.general.ufw:
+      policy: allow
+      direction: outgoing
+      state: enabled
+
+  - name: Defino politicas de tráfico entrante
+    community.general.ufw:
+      policy: deny
+      direction: incoming
+      state: enabled
+
+  - name: servicio UFW levantado y activo
+    ansible.builtin.systemd_service:
+      name: ufw
+      state: started
+      enabled: true
