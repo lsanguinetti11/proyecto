@@ -56,10 +56,7 @@
       enabled: true
 
   handlers:
-
   - name: Reiniciar Tomcat
     ansible.builtin.systemd:
       name: tomcat
       state: restarted
-        
-
