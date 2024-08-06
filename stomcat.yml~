@@ -5,21 +5,6 @@
   user: sysadmin
 
   tasks:
-  
-  - name: bajar tomcat
-    ansible.builtin.uri:
-    url: "{{tomcat_url}}"
-    dest: /opt/
-  registrer: tomcat_file
-
-  - name: descomprimo el archivo de tomcat
-    ansible.builtin.unarchive:
-      src: "{{ tomcat_file.path}}"
-      dest: /opt
-      remote_src: true
-
-
-
 
   - name: Instalar Tomcat
     ansible.builtin.dnf:
